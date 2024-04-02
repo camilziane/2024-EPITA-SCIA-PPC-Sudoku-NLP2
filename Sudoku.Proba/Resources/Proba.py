@@ -4,19 +4,26 @@ from itertools import permutations
 
 
 N = 9
+s = "..53.....8......2..7..1.5..4....53...1..7...6..32...8..6.5....9..4....3......97.."
+
+# Split the string into chunks of 9 characters
+chunks = [s[i : i + 9] for i in range(0, len(s), 9)]
+
+# Convert each character into an integer, treating '.' as 0
+instance = [[int(char) if char != "." else 0 for char in chunk] for chunk in chunks]
 
 
-instance = (
-    (0, 0, 0, 4, 0, 9, 6, 7, 0),
-    (0, 0, 0, 0, 7, 6, 9, 0, 0),
-    (0, 0, 0, 0, 0, 0, 0, 0, 3),
-    (0, 0, 0, 0, 0, 1, 7, 4, 0),
-    (6, 4, 0, 0, 0, 0, 0, 1, 8),
-    (0, 2, 1, 6, 0, 0, 0, 0, 0),
-    (1, 0, 0, 0, 0, 0, 0, 0, 0),
-    (0, 0, 4, 3, 2, 0, 0, 0, 0),
-    (0, 6, 2, 9, 0, 4, 0, 0, 0),
-)
+# instance = (
+#     (0, 0, 0, 4, 0, 9, 6, 7, 0),
+#     (0, 0, 0, 0, 7, 6, 9, 0, 0),
+#     (0, 0, 0, 0, 0, 0, 0, 0, 3),
+#     (0, 0, 0, 0, 0, 1, 7, 4, 0),
+#     (6, 4, 0, 0, 0, 0, 0, 1, 8),
+#     (0, 2, 1, 6, 0, 0, 0, 0, 0),
+#     (1, 0, 0, 0, 0, 0, 0, 0, 0),
+#     (0, 0, 4, 3, 2, 0, 0, 0, 0),
+#     (0, 6, 2, 9, 0, 4, 0, 0, 0),
+# )
 
 
 def init_cells() -> np.ndarray:
@@ -230,6 +237,9 @@ class solveSudoku:
             simplified_decision_indexes = np.argwhere(
                 np.count_nonzero(self.decision_values, axis=1) == 1
             ).reshape(-1)
+            number_new_decisions = len(simplified_decision_indexes) - np.count_nonzero(
+                self.grid
+            )
             for simplified_decision_index in simplified_decision_indexes:
                 self.grid[simplified_decision_index] = (
                     np.argmax(self.decision_values[simplified_decision_index]) + 1
@@ -244,12 +254,16 @@ class solveSudoku:
         return np.count_nonzero(self.grid) == 81
 
 
+# print("OK")
 # start = default_timer()
 solve_sudoku = solveSudoku(instance)
 if solve_sudoku.solve():
     print(solve_sudoku.grid.reshape(9, 9))
-    r = instance
+    r = [[int(c) for c in l] for l in solve_sudoku.grid.reshape(9, 9)]
+    # r = list(solve_sudoku.grid)
+    ...
 else:
+    print(solve_sudoku.grid.reshape(9, 9))
     print("Aucune solution trouvee")
 
 # execution = default_timer() - start
